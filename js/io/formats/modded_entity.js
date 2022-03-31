@@ -250,7 +250,7 @@ const Templates = {
 
 			public class %(identifier)<T extends Entity> extends EntityModel<T> {
 				// This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
-				public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation("modid", "%(identifier_rl)"), "main");
+				public static final EntityModelLayer LAYER_LOCATION = new EntityModelLayer(new Identifier("modid", "%(identifier_rl)"), "main");
 				%(fields)
 
 				public %(identifier)(ModelPart root) {
@@ -286,6 +286,64 @@ const Templates = {
 			?(has_no_rotation)%(remove_n), PartPose.offset(%(x), %(y), %(z)));`,
 		renderer: `%(bone).render(poseStack, buffer, packedLight, packedOverlay);`,
 		cube: `.texOffs(%(uv_x), %(uv_y)){?(has_mirror).mirror()}.addBox(%(x), %(y), %(z), %(dx), %(dy), %(dz), new CubeDeformation(%(inflate))){?(has_mirror).mirror(false)}`,
+	},
+	'1.18.2_yarn': {
+		name: 'Fabric 1.18.2 (Yarn)',
+		remember: false,
+		use_layer_definition: true,
+		flip_y: true,
+		integer_size: false,
+		file:
+			`// Made with Blockbench %(bb_version), template by Jab125
+			// Exported for Minecraft version 1.18.2 with Yarn mappings
+			// Paste this class into your mod and generate all required imports
+
+			import net.minecraft.client.model.*;
+			import net.minecraft.client.render.VertexConsumer;
+			import net.minecraft.client.render.entity.model.EntityModel;
+			import net.minecraft.client.render.entity.model.EntityModelLayer;
+			import net.minecraft.client.util.math.MatrixStack;
+			import net.minecraft.entity.Entity;
+			import net.minecraft.util.Identifier;
+
+			public class %(identifier)<T extends Entity> extends EntityModel<T> {
+
+				public static final EntityModelLayer LAYER_LOCATION = new EntityModelLayer(new Identifier("modid", "%(identifier_rl)"), "main");
+				%(fields)
+
+				public %(identifier)(ModelPart root) {
+					%(model_parts)
+				}
+
+				public static TexturedModelData createBodyLayer() {
+					ModelData modeldata = new ModelData();
+					ModelPartData modelpartdata = modeldata.getRoot();
+
+					%(content)
+
+					return TexturedModelData.of(modeldata, %(texture_width), %(texture_height));
+				}
+
+				@Override
+				public void setAngles(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+
+				}
+
+				@Override
+				public void render(MatrixStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+					%(renderers)
+				}
+			}`,
+		field: `private final ModelPart %(bone);`,
+		model_part: `this.%(bone) = root.getChild("%(bone)");`,
+		bone:
+			`?(has_no_parent)ModelPartData %(bone) = modelpartdata.addChild("%(bone)", ModelPartBuilder.create()
+			?(has_parent)ModelPartData %(bone) = %(parent).addChild("%(bone)", ModelPartBuilder.create()
+			%(remove_n)%(cubes)
+			?(has_rotation)%(remove_n), ModelTransform.of(%(x), %(y), %(z), %(rx), %(ry), %(rz)));
+			?(has_no_rotation)%(remove_n), ModelTransform.pivot(%(x), %(y), %(z)));`,
+		renderer: `%(bone).render(poseStack, buffer, packedLight, packedOverlay);`,
+		cube: `.uv(%(uv_x), %(uv_y)){?(has_mirror).mirror()}.cuboid(%(x), %(y), %(z), %(dx), %(dy), %(dz), new Dilation(%(inflate))){?(has_mirror).mirror(false)}`,
 	},
 
 	get(key, version = Project.modded_entity_version) {
