@@ -257,7 +257,7 @@ const Templates = {
 					%(model_parts)
 				}
 
-				public static LayerDefinition createBodyLayer() {
+				public static LayerDefinition createTexturedModelData() {
 					MeshDefinition meshdefinition = new MeshDefinition();
 					PartDefinition partdefinition = meshdefinition.getRoot();
 
